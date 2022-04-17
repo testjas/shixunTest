@@ -1,6 +1,6 @@
 // import ReactDOM from "react-dom";
 import Router from './router'
-import "./assets/base.css"
+import "./assets/base.less"
 import {createRoot} from 'react-dom/client'
 
 const container=document.getElementById('root');
