@@ -34,6 +34,7 @@ public class UserServeController {
         Admin admin=new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
+        admin.setAuth("user");
         return userServeService.register(admin);
     }
 }

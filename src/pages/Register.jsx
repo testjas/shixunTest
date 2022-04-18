@@ -1,19 +1,28 @@
 import React from 'react'
-import { Form, Input, Button, Checkbox } from 'antd';
+import { message,Form, Input, Button } from 'antd';
 import less from './less/Login.less'
-import { Link } from 'react-router-dom';
+import { useNavigate,Link} from 'react-router-dom';
 import logoImg from '../assets/img/logo.png'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { RegisterApi } from '../request/api';
 
-export default function register() {
+export default function Register() {
+    const navigate=useNavigate();//页面跳转的hook
+
     const onFinish = (values) => {
-      console.log('Success:', values);
+      RegisterApi({
+        username:values.username,//传递注册用户信息
+        password:values.password
+      }).then(res=>{
+        if(res.flag===true){
+          message.success(res.message);//登陆成功后的提示
+          setTimeout(()=>{navigate('/login')},1500)//注册成功1.5秒后跳转
+        }else{
+          message.error(res.message);
+        }
+      })
     };
   
-    const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo);
-    };
   return (
     <div className="login">
       <div className='login_box'>
@@ -24,7 +33,6 @@ export default function register() {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item

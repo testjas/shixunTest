@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 配置项
 const axiosOption = {
-    baseURL: 'http://47.93.114.103:6688/manage',
+    baseURL: '/registerServer',
     timeout: 5000
 }
 

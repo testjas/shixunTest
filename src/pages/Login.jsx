@@ -1,18 +1,31 @@
-import React from 'react'
-import { Form, Input, Button, Checkbox } from 'antd';
+import React from 'react';
+import { Form, Input, Button, message } from 'antd';
 import less from './less/Login.less'
-import { Link } from 'react-router-dom';
-import logoImg from '../assets/img/logo.png'
+import { Link , useNavigate} from 'react-router-dom';
+import logoImg from '../assets/img/logo.png';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { LoginApi } from '../request/api';
 
 export default function Login() {
+    const navigate = useNavigate();
+
     const onFinish = (values) => {
-      console.log('Success:', values);
+      LoginApi({
+        username:values.username,
+        password:values.password
+      }).then(res=>{
+        if(res.flag===true){
+          message.success(res.message);//登陆成功后的提示
+          localStorage.setItem("username",res.data.username);//存储后端登陆成功后返回的数据
+          localStorage.setItem("auth",res.data.auth);
+          setTimeout(()=>{navigate('/')},1500);//注册成功1.5秒后跳转
+        }else{
+          message.error(res.message);
+        }
+      })
     };
   
-    const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo);
-    };
+  
   return (
     <div className="login">
       <div className='login_box'>
@@ -23,7 +36,6 @@ export default function Login() {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item

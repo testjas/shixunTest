@@ -15,16 +15,10 @@ public class ResultsPack {
         this.flag=flag;
     }//传递是否查询成功等
 
-    public ResultsPack(boolean flag,Object data){//传递查询包含是否成功和数据等
+    public ResultsPack(boolean flag,String message){//传递查询包含是否成功和数据等
         this.flag=flag;
-        this.data=data;
-    }
-
-    public ResultsPack(String message){//传递失败时的消息提示
-        this.flag=false;
         this.message=message;
     }
-
 
     public ResultsPack(boolean flag,Object data,String message){//传递成功失败时的消息提示
         this.flag=flag;
