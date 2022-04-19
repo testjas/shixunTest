@@ -2,9 +2,57 @@
 
 @bgcolor:rgb(228, 227, 227);
 
+
 body{
-    font-size: 19px;
-    color: aqua;
+    font-size: 15px;
     font-family: "微软雅黑";
     background-color:@bgcolor;
+}
+
+#app_page{
+    height: 100vh;//设置网页高度跟着缩小动
+}
+
+header{
+    height: 60px;
+    background-color: rgb(246, 246, 246);
+    padding: 0 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: #001529 solid 1px;
+    .ant-dropdown-link{//因为弹出菜单紧贴a标签所以会出现弹出菜单和头像昵称重合
+        height: 35px;
+        display: block;
+        font-weight: bold;
+        color: #000;
+        &:hover{//绑定hover事件
+            color: rgb(53, 120, 252);
+        }
+    }
+    .logo{
+        width: 160px;
+        background-color: #142432;
+        border-radius: 10px;
+        opacity: 70%;
+    }
+    .UserIcon{
+        background-color: aqua;
+        border-radius: 100%;
+        border:black 1px solid ;
+        width: 34px;
+        padding-top: 2px;
+    }
+    .UserData{
+        padding-left: 10px;
+        padding-right: 20px;
+    }
+}
+
+footer{
+    height: 70px;
+    background-color:#001529;
+    text-align: center;
+    color: aliceblue;
+    line-height: 70PX;
 }
