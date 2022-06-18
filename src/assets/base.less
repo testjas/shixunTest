@@ -1,58 +1,106 @@
-@import '~antd/dist/antd.css';
+@import "~antd/dist/antd.css";
 
 @bgcolor:rgb(228, 227, 227);
 
-
-body{
-    font-size: 15px;
-    font-family: "微软雅黑";
-    background-color:@bgcolor;
+body {
+  font-size: 15px;
+  font-family: "微软雅黑";
+  background-color: @bgcolor;
 }
 
-#app_page{
-    height: 100vh;//设置网页高度跟着缩小动
+#app_page {
+  height: 100vh; //设置网页高度跟着缩小动
 }
 
-header{
-    height: 60px;
-    background-color: rgb(246, 246, 246);
-    padding: 0 7px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: #001529 solid 1px;
-    .ant-dropdown-link{//因为弹出菜单紧贴a标签所以会出现弹出菜单和头像昵称重合
-        height: 35px;
-        display: block;
-        font-weight: bold;
-        color: #000;
-        &:hover{//绑定hover事件
-            color: rgb(53, 120, 252);
-        }
+header {
+  height: 60px;
+  background-color: rgb(246, 246, 246);
+  padding: 0 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: #001529 solid 1px;
+  .ant-dropdown-link {
+    //因为弹出菜单紧贴a标签所以会出现弹出菜单和头像昵称重合
+    height: 35px;
+    display: block;
+    font-weight: bold;
+    color: #000;
+    &:hover {
+      //绑定hover事件
+      color: rgb(53, 120, 252);
     }
-    .logo{
-        width: 160px;
-        background-color: #142432;
-        border-radius: 10px;
-        opacity: 70%;
-    }
-    .UserIcon{
-        background-color: aqua;
-        border-radius: 100%;
-        border:black 1px solid ;
-        width: 34px;
-        padding-top: 2px;
-    }
-    .UserData{
-        padding-left: 10px;
-        padding-right: 20px;
-    }
+  }
+  .logo {
+    width: 160px;
+    background-color: #142432;
+    border-radius: 10px;
+    opacity: 70%;
+  }
+  .UserIcon {
+    background-color: aqua;
+    border-radius: 100%;
+    border: black 1px solid;
+    width: 34px;
+    padding-top: 2px;
+  }
+  .UserData {
+    padding-left: 10px;
+    padding-right: 20px;
+  }
 }
 
-footer{
-    height: 70px;
-    background-color:#001529;
-    text-align: center;
-    color: aliceblue;
-    line-height: 70PX;
+.container {
+  display: inline-flex;
+  justify-content: flex-start;
+  .aside {
+    height: calc(100vh-130px); //设置侧边宽为100vh-上下总和
+    background-color: #001529;
+  }
+  .scroll_box {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 600px;
+    .container_box {
+      display: block;
+      box-sizing: border-box;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.215);
+      flex-direction: column;
+
+      .container_content {
+        flex: 1;
+      }
+      // background-image: url("img/bg.png");
+    }
+  }
+}
+
+footer {
+  height: 70px;
+  background-color: #001529;
+  text-align: center;
+  color: aliceblue;
+  line-height: 70px;
+}
+
+.scroll_box::-webkit-scrollbar {
+  //滚动条样式
+  width: 10px;
+  height: 10px;
+  /**/
+}
+.scroll_box::-webkit-scrollbar-track {
+  background: rgb(239, 239, 239);
+  border-radius: 2px;
+}
+.scroll_box::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 10px;
+}
+.scroll_box::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+.scroll_box::-webkit-scrollbar-corner {
+  background: #179a16;
 }

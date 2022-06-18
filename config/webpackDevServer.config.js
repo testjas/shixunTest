@@ -105,6 +105,11 @@ module.exports = function (proxy, allowedHost) {
         target: 'http://localhost:8081/UserServe', // 后台服务地址以及端口号
         changeOrigin: true, //是否跨域
         pathRewrite: { '^/registerServer': '/' }
+      },
+      '/disServer': {
+        target: 'http://localhost:8081/DisServe', // 后台服务地址以及端口号
+        changeOrigin: true, //是否跨域
+        pathRewrite: { '^/disServer': '/' }
       }
     },
     onBeforeSetupMiddleware(devServer) {

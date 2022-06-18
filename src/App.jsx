@@ -1,24 +1,30 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom';
-import { Layout } from 'antd';
-import Header from './components/header';
-import Footer from './components/footer';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Layout } from "antd";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import Aside from "./components/Aside";
+import Bread from "./components/Bread";
+import { useEffect } from "react";
+import { useState } from "react";
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 export default function App() {
   return (
-    <Layout id='app_page'>
-      <Header/>
-      <Layout>
-        <Sider>Sider</Sider>
-        <Content>
-          <div>
-            <Outlet />
+    <Layout id="app_page">
+      <Header />
+      <div className="container">
+        <Aside />
+        <div className="scroll_box">
+          <div className="container_box">
+            <Bread />
+            <div className="container_content">
+              <Outlet />
+            </div>
           </div>
-        </Content>
-      </Layout>
-      <Footer/>
+        </div>
+      </div>
+      <Footer />
     </Layout>
-
-  )
+  );
 }

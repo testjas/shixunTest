@@ -19,11 +19,13 @@ export default function Header() {
         let auth=localStorage.getItem("auth");
         // setUsername(un+"/管理员账户" || "未登录");//相当于if的效果
         if(un){
-            if(auth=="admin"){
+            if(auth==="admin"){
                 setUicon(adminIcon);
                 setUsername(un+"/管理员账户");
-            }else{
+            }else if(auth==="user"){
                 setUsername(un);
+            }else{
+                setUsername(un+"/任务派发员")
             }
             setChooseMenu(LoginMenu);//设置弹出菜单为登陆时的菜单
         }else{
@@ -41,11 +43,14 @@ export default function Header() {
         setTimeout(()=>{navigate('/login');},1000);//在1秒后跳转到登陆界面
     }
 
-
+    const editInfo=()=>{
+        message.success("操作成功");
+        setTimeout(()=>{navigate('/means');},500);//在0.5秒后跳转到登陆界面
+    }
 
     const LoginMenu = (//有登陆时的菜单
         <Menu>{/*弹出的菜单*/}
-            <Menu.Item key={1}>修改资料</Menu.Item>
+            <Menu.Item key={1} onClick={editInfo}>修改资料</Menu.Item>
             <Menu.Divider/>{/*分隔用的分隔线*/}
             <Menu.Item key={2} onClick={logOut}>退出登录</Menu.Item>
         </Menu>

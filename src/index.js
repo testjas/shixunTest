@@ -9,3 +9,4 @@ root.render(<Router/>)
 // ReactDOM.render(
 //   <Router/>
 //   ,document.getElementById('root'))
+document.title = '任务发布管理系统'//标题

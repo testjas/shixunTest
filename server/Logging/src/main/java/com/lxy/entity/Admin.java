@@ -1,25 +1,51 @@
 package com.lxy.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * 
+ * @TableName admin
+ */
+@TableName(value ="admin")
 @Data
-@TableName("admin")
 public class Admin implements Serializable {
-    private static final long serialVersionUID = -20590655740338184L;
-    
-    private String username;
-    
-    private String password;
-    @TableId(type = IdType.AUTO)//id自增
+    /**
+     * 
+     */
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 
+     */
+    private String username;
+
+    /**
+     * 
+     */
+    private String password;
+
+    /**
+     * 
+     */
     private String auth;
 
+    /**
+     * 
+     */
+    private Date date;
 
+    /**
+     * 
+     */
+    private Integer isdelete;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }
-
