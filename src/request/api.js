@@ -21,5 +21,38 @@ export const UpdateUser = (params) => request.post("/updateUser", params);
 export const GetUser = (params) => request.post("/getUser", params);
 
 //获取任务信息
+export const GetMissionList = (params)=> request.post("/getMissionList",params);
 
+//新增任务
+export const AddMission = (params)=> request.post("/addMission",params);
 
+//新增任务
+export const DeleteMission = (params)=> request.post("/deleteMission",params);
+
+//更新任务
+export const UpdateMission = (params)=> request.post("/updateMission",params);
+
+//获取登陆时间
+export const GetLoginTime = (params)=> request.post("/getLoginTime",params);
+
+//派发员操作
+//获取任务列表
+export const GetDisMissionList = (params)=> disRequest.post("/getDisMissionList",params);
+
+//删除任务
+export const DeleteDisMission = (params)=> disRequest.post("/deleteDisMission",params);
+
+//更新任务
+export const UpdateDisMission = (params)=> disRequest.post("/updateDisMission",params);
+
+//添加任务
+export const AddDisMission = (params)=> disRequest.post("/addDisMission",params);
+
+//获取任务相关人员表
+export const GetUserMissionInfo = (params)=> disRequest.post("/getUserMissionInfo",params);
+
+//添加用户到一个任务中
+export const AddUserMission = (params)=> disRequest.post("/addUserMission",params);
+
+//删除一个用户任务
+export const DeleteUserMission = (params)=> disRequest.post("/deleteUserMission",params);

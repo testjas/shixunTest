@@ -3,13 +3,13 @@ import {
   ModalForm,
   ProFormText,
   ProFormSelect,
+  ProFormDigit,
   ProFormDateTimeRangePicker,
   ProFormTextArea,
-  ProFormDigit
 } from "@ant-design/pro-components";
 import { Button, message } from "antd";
 import React from "react";
-import { AddMission } from "../../../request/api";
+import { AddDisMission } from "../../../request/api";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 
@@ -24,19 +24,17 @@ export default function AddUser(props) {
   };
 
   const addMission = (values) => {
-    AddMission({
+    AddDisMission({
       missionName: values.mname, //传递注册用户信息
       description: values.description,
       userNum: values.unum,
-      startTime:values.missionTime[0],
-      endTime:values.missionTime[1],
-      belong:values.belong,
-      missionType:values.missionType,
-      createTime:moment(new Date())
-      .utcOffset(8)
-      .format("YYYY-MM-DD HH:mm:ss")
+      startTime: values.missionTime[0],
+      endTime: values.missionTime[1],
+      missionType: values.missionType,
+      createTime: moment(new Date()).utcOffset(8).format("YYYY-MM-DD HH:mm:ss"),
+      belong:localStorage.getItem("username")
     }).then((res) => {
-      console.log(res)
+      console.log(res);
       if (res.flag === true) {
         message.success(res.message); //登陆成功后的提示
         props.setUp(1); //插入用户后实时更新父组件
@@ -63,7 +61,7 @@ export default function AddUser(props) {
       }}
       onFinish={async (values) => {
         await waitTime(1500);
-        console.log(values)
+        console.log(values);
         addMission(values);
         message.success("提交成功");
         return true;
@@ -83,22 +81,16 @@ export default function AddUser(props) {
             },
           ]}
         />
-
-        <ProFormText
-          width="md"
-          name="belong"
-          label="归属"
-          placeholder="请输派发员名称"
-          rules={[
-            {
-              required: true,
-              max: 5,
-            },
-          ]}
-        />
       </ProForm.Group>
-
       <ProForm.Group>
+        <ProFormDigit
+          width="md"
+          name="unum"
+          label="可参与人数"
+          placeholder="人数"
+          min={1}
+          max={999}
+        />
         <ProFormSelect
           request={async () => [
             {
@@ -119,14 +111,6 @@ export default function AddUser(props) {
             },
           ]}
         />
-        <ProFormDigit
-          width="md"
-          name="unum"
-          label="可参与人数"
-          placeholder="请输入人数"
-          min={1}
-          max={999}
-        />
       </ProForm.Group>
 
       <ProForm.Group>
@@ -140,20 +124,20 @@ export default function AddUser(props) {
             },
           ]}
         />
-        <ProFormTextArea
-          name="description"
-          width="md"
-          label="任务描述"
-          tooltip="最少输入一位，最多255个字"
-          rules={[
-            {
-              required: true,
-              min:1,
-              max:255
-            },
-          ]}
-        />
       </ProForm.Group>
+      <ProFormTextArea
+        name="description"
+        width="md"
+        label="任务描述"
+        tooltip="最少输入一位，最多255个字"
+        rules={[
+          {
+            required: true,
+            min: 1,
+            max: 255,
+          },
+        ]}
+      />
     </ModalForm>
   );
 }

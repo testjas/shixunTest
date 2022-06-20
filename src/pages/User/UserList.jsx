@@ -1,16 +1,15 @@
 import React, { Avatar, useState, useEffect } from "react";
 import Listless from "../less/Listless.less";
-import PopMenu from "./UserList/PopMenu";
-import AddUser from "./UserList/AddUser";
+import PopMenu from "./AdminList/PopMenu";
+import AddUser from "./AdminList/AddUser";
 import { Popconfirm, message, List, Skeleton, Pagination, Button } from "antd";
 import {
-  ProFormDatePicker,
-  ProFormDateRangePicker,
+  ProFormDateTimeRangePicker,
   ProFormSelect,
   ProFormText,
   QueryFilter,
 } from "@ant-design/pro-components";
-import { GetUserList, DeleteUser, UpdateUser } from "../../request/api";
+import { GetUserList, DeleteUser,GetLoginTime } from "../../request/api";
 import userIcon from "../../assets/img/userIcon.svg";
 import moment from "moment";
 
@@ -20,21 +19,24 @@ export default function UserList() {
   const [current, setCurrnet] = useState(1); //现在页数
   const [pageSize, setPageSize] = useState(5); //一页多少
   const [update, setUpdate] = useState(0);
+  const [val,setVal]=useState(null);//设置查询条件
   const text = "你确定要删除这条数据吗？";
 
-  // const handleOk = (e) => {//确认修改
-  //   UpdateUser({
-  //     id: values.id,
-  //     username: e.username,
-  //     date: moment(e.date).format("yyyy-MM-DD hh:mm:ss"),
-  //   }).then((res) => {
-  //     message.info(res.message);
-  //     setUpdate(update + 1);
-  //   });
+  const setValue=(values)=>{
+    setVal(values);
+    getList(current, pageSize,values);
+  }
+
+  function pdDelete(e) {
+    if (e == 1) {
+      return "被删除状态";
+    } else {
+      return "活跃状态";
+    }
+  }
 
   function confirm(e) {
-    //确定是否需要删除
-    // console.log(e)
+    //确认是否删除用户
     DeleteUser({
       id: e,
     }).then((res) => {
@@ -43,11 +45,12 @@ export default function UserList() {
     });
   }
 
-  const getList = (num) => {
+  const getList = (page,pageSize,...values) => {
     //获取用户数据列表
     GetUserList({
-      num,
+      num: page,
       count: pageSize,
+      values
     }).then((res) => {
       if (res.flag === true) {
         let { arr, num, count, total } = res.data;
@@ -59,14 +62,20 @@ export default function UserList() {
     });
   };
 
+  function setUp(e) {
+    //子组件更新时调用此方法刷新父组件
+    setUpdate(update + e);
+  }
+
   //请求列表数据
   useEffect(() => {
-    getList(current);
+    getList(current,pageSize,val);
   }, [update]);
 
-  const onChange = (pages) => {
+  const onChange = (page, pageSize) => {
+    setPageSize(pageSize);
     //分页触发事件
-    getList(pages);
+    getList(page, pageSize,val);
   };
 
   return (
@@ -74,17 +83,19 @@ export default function UserList() {
       <div className="list_search">
         <QueryFilter
           onFinish={async (values) => {
-            console.log(values.name);
+            setValue(values);
+          }}
+          onReset={async () => {
+            setVal(null);
+            getList(1, pageSize);
           }}
         >
           <ProFormText
             name="uname"
             label="用户名称"
-            rules={[{ required: true }]}
           />
-          <ProFormText name="belong" label="用户归属" />
           <ProFormSelect
-            name="dispatcher"
+            name="userauth"
             label="用户权限"
             showSearch
             valueEnum={{
@@ -92,13 +103,13 @@ export default function UserList() {
               user: "用户",
             }}
           />
-          <ProFormDateRangePicker name="create" label="创建时间" colSize={3} />
+          <ProFormDateTimeRangePicker name="create" label="创建时间" colSize={3} />
         </QueryFilter>
       </div>
       <div className="add_user">
-        <AddUser />
+        <AddUser setUp={setUp} />
       </div>
-      <div className="list_table">
+      <div className="llist_table">
         <List
           className="demo-loadmore-list"
           itemLayout="horizontal"
@@ -107,7 +118,7 @@ export default function UserList() {
             return (
               <List.Item
                 actions={[
-                  <PopMenu values={item} />,
+                  <PopMenu setUp={setUp} values={item} />,
                   <Popconfirm //弹窗确认
                     placement="topLeft"
                     title={text}
@@ -128,17 +139,27 @@ export default function UserList() {
                       <div className="title">
                         &nbsp;用户名：
                         <a className="title-text">{item.username}</a>
+                        <div className="create_time">
+                          用户创建时间：
+                          <a>
+                            {moment(item.createTime)
+                              .utcOffset(8)
+                              .format("YYYY-MM-DD HH:mm:ss")}
+                          </a>
+                          
+                        </div>
                       </div>
                     }
                     description={
                       <div className="title-auth">
-                        <p className="title-authText">用户归属：{item.auth}</p>
+                        <p className="title-authText">用户权限：{item.auth}</p>
+                        <p className="title-active">当前用户状态：{pdDelete(item.isdelete)}</p>
                       </div>
                     }
                   />
                   <div className="pwd">
-                    最近一次登录/修改时间:
-                    {moment(item.date).format("yyyy-MM-DD hh:mm:ss")}
+                    最近一次登陆时间: <br />
+                    { "123  " }
                   </div>
                 </Skeleton>
               </List.Item>
@@ -147,6 +168,8 @@ export default function UserList() {
         />
         <Pagination
           style={{ float: "right", marginTop: "20px" }}
+          showSizeChanger
+          pageSizeOptions={[5, 10, 20, 50, 100]}
           onChange={onChange}
           current={current}
           pageSize={pageSize}

@@ -11,23 +11,24 @@ import { Button, message, Input } from "antd";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {UpdateMission } from "../../../request/api";
+import {UpdateDisMission } from "../../../request/api";
 
 export default function PopMenu(props) {
   const navigate=useNavigate();//设置跳转
   let { mid, belong, createTime,description,endTime,finishStatus,joinedNum,missionName,missionType,startTime,status,timeStatus,userNum,isdelete } = props.values;
 
   const update = (e) => {
-    UpdateMission({
+    UpdateDisMission({
       mid,
       mname: e.mname,
-      belong: e.belong,
+      belong,
       description: e.description,
       isdelete:e.isdelete,
       missionType:e.missionType,
       unum:e.unum,
       missionTime:e.missionTime,
-      missionStatus:e.missionStatus
+      missionStatus:e.missionStatus,
+      username:localStorage.getItem("username")
     }).then((res) => {
       if (res.flag === true) {
         message.success(res.message);
@@ -89,19 +90,6 @@ export default function PopMenu(props) {
           rules={[
             {
               max: 20,
-            },
-          ]}
-        />
-
-        <ProFormText
-          width="md"
-          name="belong"
-          label="归属"
-          placeholder="请输派发员名称"
-          value={belong}
-          rules={[
-            {
-              max: 5,
             },
           ]}
         />

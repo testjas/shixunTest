@@ -4,12 +4,12 @@ import PopMenu from "./AdminList/PopMenu";
 import AddUser from "./AdminList/AddUser";
 import { Popconfirm, message, List, Skeleton, Pagination, Button } from "antd";
 import {
-  ProFormDateRangePicker,
+  ProFormDateTimeRangePicker,
   ProFormSelect,
   ProFormText,
   QueryFilter,
 } from "@ant-design/pro-components";
-import { GetUserList, DeleteUser } from "../../request/api";
+import { GetUserList, DeleteUser,GetLoginTime } from "../../request/api";
 import userIcon from "../../assets/img/userIcon.svg";
 import moment from "moment";
 
@@ -103,7 +103,7 @@ export default function AdminList() {
               user: "用户",
             }}
           />
-          <ProFormDateRangePicker name="create" label="创建时间" colSize={3} />
+          <ProFormDateTimeRangePicker name="create" label="创建时间" colSize={3} />
         </QueryFilter>
       </div>
       <div className="add_user">
@@ -143,7 +143,7 @@ export default function AdminList() {
                           用户创建时间：
                           <a>
                             {moment(item.createTime)
-                              .utcOffset(0)
+                              .utcOffset(8)
                               .format("YYYY-MM-DD HH:mm:ss")}
                           </a>
                           
@@ -153,13 +153,13 @@ export default function AdminList() {
                     description={
                       <div className="title-auth">
                         <p className="title-authText">用户权限：{item.auth}</p>
-                        <p className="title-active">当前用户状态：<a>{pdDelete(item.isdelete)}</a></p>
+                        <p className="title-active">当前用户状态：{pdDelete(item.isdelete)}</p>
                       </div>
                     }
                   />
                   <div className="pwd">
                     最近一次登陆时间: <br />
-                    {moment(item.date).format("MM-DD hh:mm:ss")}
+                    { "123  " }
                   </div>
                 </Skeleton>
               </List.Item>

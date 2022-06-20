@@ -4,12 +4,12 @@ import PopMenu from "./AdminMission/PopMenu";
 import AddUser from "./AdminMission/AddMission";
 import { Popconfirm, message, List, Skeleton, Pagination, Button } from "antd";
 import {
-  ProFormDateRangePicker,
+  ProFormDateTimeRangePicker,
   ProFormSelect,
   ProFormText,
   QueryFilter,
 } from "@ant-design/pro-components";
-import { GetUserList, DeleteUser } from "../../request/api";
+import {  DeleteMission,GetMissionList } from "../../request/api";
 import signIcon from "../../assets/img/signIcon.svg";
 import taskIcon from "../../assets/img/taskIcon.svg"
 import moment from "moment";
@@ -21,18 +21,29 @@ export default function AdminMission() {
   const [pageSize, setPageSize] = useState(5); //一页多少
   const [update, setUpdate] = useState(0);
   const [val, setVal] = useState(null); //设置查询条件
-  const text = "你确定要删除这条数据吗？";
+  const text = "你确定要删除这条任务吗？";
+
 
   const setValue = (values) => {
     setVal(values);
     getList(current, pageSize, values);
   };
 
+  function pdStatus(e){//判断是否中止
+    if(e===0){
+      return "正常";
+    }else{
+      return "中止";
+    }
+  }
+
   function confirm(e) {
+    console.log(e)
     //确认是否删除用户
-    DeleteUser({
-      id: e,
+    DeleteMission({
+      mid: e,
     }).then((res) => {
+      console.log(res)
       message.info(res.message);
       setUpdate(update + 1);
     });
@@ -40,7 +51,7 @@ export default function AdminMission() {
 
   const getList = (page, pageSize, ...values) => {
     //获取用户数据列表
-    GetUserList({
+    GetMissionList({
       num: page,
       count: pageSize,
       values,
@@ -72,7 +83,7 @@ export default function AdminMission() {
   };
 
   return (
-    <div>
+    <div className="total">
       <div className="list_search">
         <QueryFilter
           onFinish={async (values) => {
@@ -86,24 +97,27 @@ export default function AdminMission() {
           <ProFormText
             name="mname"
             label="任务名称"
-            rules={[{ required: true }]}
+          />
+          <ProFormText
+            name="disname"
+            label="发布人"
           />
           <ProFormSelect
-            name="missontype"
+            name="missiontype"
             label="任务类型"
             showSearch
             valueEnum={{
-              task: "作业",
-              sign: "签到",
+              作业: "作业",
+              签到: "签到",
             }}
           />
           <ProFormSelect
-            name="missonstatus"
+            name="missionstatus"
             label="任务状态"
             showSearch
             valueEnum={{
-              full: "已满",
-              free: "未满"
+              已满: "已满",
+              未满: "未满"
             }}
           />
           <ProFormSelect
@@ -111,12 +125,21 @@ export default function AdminMission() {
             label="时间状态"
             showSearch
             valueEnum={{
-              timeout:"已结束",
-              intime:"已发布",
-              notstart:"未开始"
+              已结束:"已结束",
+              已发布:"已发布",
+              未开始:"未开始"
             }}
           />
-          <ProFormDateRangePicker name="create" label="创建时间" colSize={3} />
+          <ProFormSelect
+            name="status"
+            label="状态"
+            showSearch
+            valueEnum={{
+              0:"正常",
+              2:"中止",
+            }}
+          />
+          <ProFormDateTimeRangePicker name="create" label="创建时间" colSize={3} />
         </QueryFilter>
       </div>
       <div className="add_user">
@@ -135,7 +158,7 @@ export default function AdminMission() {
                   <Popconfirm //弹窗确认
                     placement="topLeft"
                     title={text}
-                    onConfirm={() => confirm(item.id)}
+                    onConfirm={() => confirm(item.mid)}
                     okText="确认"
                     cancelText="取消"
                   >
@@ -147,40 +170,47 @@ export default function AdminMission() {
               >
                 <Skeleton loading={false} active>
                   <List.Item.Meta
-                    avatar={<img className="UserIcon" src={signIcon} />}
+                    avatar={<img className="MissionIcon" src={item.missionType==="签到"? signIcon:taskIcon} />}
                     title={
                       <div className="title">
                         &nbsp;任务名：
-                        <a className="title-text">{item.username}</a>
+                        <a className="title-text">{item.missionName}</a>
                         <div className="time_range">
                           任务时间范围：
                           <a>
-                            {moment(item.createTime)
-                              .utcOffset(0)
+                            {moment(item.startTime)
+                              .utcOffset(8)
                               .format("YYYY-MM-DD HH:mm:ss")}
                           </a>
                           ----
                           <a>
-                            {moment(item.createTime)
-                              .utcOffset(0)
+                            {moment(item.endTime)
+                              .utcOffset(8)
                               .format("YYYY-MM-DD HH:mm:ss")}
                           </a>
                         </div>
+                        <div className="status">状态：<a>{pdStatus(item.isdelete)}</a></div>
                       </div>
                     }
                     description={
                       <div className="title-auth">
                         <p className="title-authText">
-                          任务发布人：{item.auth}
+                          任务发布人：{item.belong}
                         </p>
                         <p className="title-type">
-                          当前任务类型：<a>{"作业类"}</a>
+                          当前任务类型：<a>{item.missionType  }</a>
                         </p>
                         <p className="title-active">
-                          当前任务状态：<a>{"待定"}</a>
+                          当前任务状态：<a>{item.status}</a>
                         </p>
                         <p className="title-active">
-                          当前时间状态：<a>{"待定"}</a>
+                          当前时间状态：<a>{item.timeStatus}</a>
+                        </p>
+                        <p className="title-finish">
+                          参与人数：<a>{item.userNum}/{item.joinedNum}</a>
+                        </p>
+                        <p className="title-active">
+                          已完成：<a>{item.finishStatus}</a>
                         </p>
                       </div>
                     }
@@ -188,7 +218,7 @@ export default function AdminMission() {
                   <div className="pwd">
                     任务创建时间：<br />
                     {moment(item.createTime)
-                      .utcOffset(0)
+                      .utcOffset(8)
                       .format("YYYY-MM-DD HH:mm:ss")}
                   </div>
                 </Skeleton>
