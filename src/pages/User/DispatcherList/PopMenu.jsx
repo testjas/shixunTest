@@ -1,26 +1,17 @@
 import {
   DrawerForm,
   ProForm,
-  ProFormDatePicker,
   ProFormGroup,
   ProFormText,
-  ProFormTextArea,
   ProFormSelect
 } from "@ant-design/pro-components";
 import { Button, message, Input } from "antd";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { GetUser, UpdateUser } from "../../../request/api";
+import { UpdateUserFinish } from "../../../request/api";
 
 export default function PopMenu(props) {
-  const navigate=useNavigate();//设置跳转
   let { uid,mid,username,missionName,joinTime,finish} = props.values;
-  const [description, setDescription] = useState();
-  const [name, setName] = useState();
-  const [prename, setPrename] = useState();
-  const [jnum, setJnum] = useState();
-  const [mnum, setMnum] = useState();
 
   function pdFinish(e) {//是否被删除
     if (e == 1) {
@@ -30,45 +21,19 @@ export default function PopMenu(props) {
     }
   }
 
-  const getUserData = () => {
-    //获取用户信息
-    // GetUser({
-    //   id,
-    //   auth,
-    // }).then((res) => {
-    //   if (auth === "user") {
-    //     //不同用户有不同信息
-    //     let { description, joinNum, username } = res.data;
-    //     setName(username);
-    //     setPrename(username);
-    //     setDescription(description);
-    //     setJnum(joinNum);
-    //   } else {
-    //     let { description, missionNum, username } = res.data;
-    //     setName(username);
-    //     setDescription(description);
-    //     setMnum(missionNum);
-    //   }
-    // });
-  };
-
   const update = (e) => {
-    // console.log(e)
-    // UpdateUser({
-    //   id,
-    //   auth,
-    //   name: e.name,
-    //   prename: prename,
-    //   description: e.description,
-    //   isdelete:e.isdelete
-    // }).then((res) => {
-    //   if (res.flag === true) {
-    //     message.success(res.message);
-    //     props.setUp(1);//调用父组件方法来实时更新
-    //   } else {
-    //     message.error(res.message);
-    //   }
-    // });
+    UpdateUserFinish({
+      mid,
+      uid,
+      finish:e.finish
+    }).then((res)=>{
+      if(res.flag===true){
+        message.success(res.message);
+      }else{
+        message.error(res.message);
+      }
+      props.setUp(1);
+    })
   };
 
   const waitTime = (time = 100) => {
@@ -131,7 +96,7 @@ export default function PopMenu(props) {
       title="修改"
       formRef={formRef}
       trigger={
-        <Button onClick={() => getUserData()} type="primary">
+        <Button type="primary">
           修改
         </Button>
       }

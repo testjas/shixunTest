@@ -68,7 +68,6 @@ export default function DispatcherList() {
       username:localStorage.getItem("username"),
       values
     }).then((res) => {
-      console.log(res)
       if (res.flag === true) {
         let { arr, num, count, total } = res.data;
         setList(arr);

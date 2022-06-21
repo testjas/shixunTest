@@ -56,3 +56,6 @@ export const AddUserMission = (params)=> disRequest.post("/addUserMission",param
 
 //删除一个用户任务
 export const DeleteUserMission = (params)=> disRequest.post("/deleteUserMission",params);
+
+//修改用户是否完成
+export const UpdateUserFinish = (params)=> disRequest.post("/updateUserFinish",params);
