@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxy.mapper.table_mission_infoMapper">
+
+    <resultMap id="BaseResultMap" type="com.lxy.entity.table_mission_info">
+        <id property="mid" column="mid" jdbcType="INTEGER"/>
+        <result property="missionName" column="mission_name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="userNum" column="user_num" jdbcType="INTEGER"/>
+        <result property="joinedNum" column="joined_num" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="finishStatus" column="finish_status" jdbcType="INTEGER"/>
+        <result property="timeStatus" column="time_status" jdbcType="VARCHAR"/>
+        <result property="belong" column="belong" jdbcType="VARCHAR"/>
+        <result property="missionType" column="mission_type" jdbcType="VARCHAR"/>
+        <result property="isdelete" column="isdelete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        mid
+        ,mission_name,description,
+        user_num,joined_num,create_time,
+        start_time,end_time,status,
+        belong,mission_type
+    </sql>
+
+    <update id="updateTime"><!--更新是否满员-->
+        UPDATE table_mission_info
+        SET time_status='已发布'
+        WHERE NOW() BETWEEN start_time AND end_time;
+        UPDATE table_mission_info
+        SET time_status='未开始'
+        WHERE NOW() &lt; start_time;
+        UPDATE table_mission_info
+        SET time_status='已结束'
+        WHERE NOW() &gt; end_time
+    </update>
+
+    <update id="updateStatus"><!--更新是否满员-->
+        UPDATE table_mission_info
+        SET status='已满'
+        WHERE user_num = joined_num;
+        UPDATE table_mission_info
+        SET status='未满'
+        WHERE joined_num &lt; user_num
+    </update>
+
+    <delete id="deleteMission"><!--删除任务-->
+        delete
+        from table_mission_info
+        where isdelete = 1
+    </delete>
+
+    <resultMap id="MUIMap" type="com.lxy.entity.mission_user_info">
+        <id property="uid" column="uid" jdbcType="INTEGER"/>
+        <id property="mid" column="mid" jdbcType="INTEGER"/>
+        <result property="missionName" column="mission_name" jdbcType="VARCHAR"/>
+        <result property="finish" column="finish" jdbcType="INTEGER"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="userMissionInfo" resultMap="MUIMap">
+        select tui.uid uid, tmi.mid, tui.username, tmi.mission_name, tum.join_time, tum.finish, tum.finish_time
+        from table_mission_info tmi,
+        table_user_info tui,
+        table_user_mission tum
+        where tum.uid = tui.uid
+        and tum.mid = tmi.mid
+        <if test="param1 !=null and param1 != ''">
+            and tui.username like concat('%',#{param1},'%')
+        </if>
+        <if test="param2 !=null and param2 != ''">
+            and tmi.mission_name like concat('%',#{param2},'%')
+        </if>
+        <if test="param3 !=null">
+            and tum.finish = #{param3}
+        </if>
+        <if test="param4 !=null and param5 !=null">
+            and tum.join_time between #{param4} and #{param5}
+        </if>
+        <if test="param6 !=null and param7 !=null">
+            and tum.finish_time between #{param6} and #{param7}
+        </if>
+        and tmi.belong = #{param8}
+        <if test="param9 !=null and param10 !=null">
+            limit #{param9},#{param10}
+        </if>
+    </select>
+
+    <select id="userMissionInfoList" resultType="com.lxy.entity.user_mission_list_info">
+        select tui.uid uid, tmi.mid, tmi.belong, tmi.mission_name, tum.join_time, tum.finish,
+        tum.finish_time,tmi.description,tmi.user_num,tmi.joined_num,tmi.start_time,tmi.end_time,
+        tmi.status,tmi.finish_status,tmi.time_status,tmi.mission_type,tmi.isdelete,ufi.info info
+        from table_mission_info tmi,
+        table_user_info tui,
+        table_user_mission tum,
+        user_finish_info ufi
+        where tum.uid = tui.uid
+        and tum.mid = tmi.mid
+        and ufi.mid = tum.mid
+        and ufi.uid = tum.uid
+        and tui.username = #{map.username}
+        <if test="map.missionName !=null and map.missionName != ''">
+            and tmi.mission_name like concat('%',#{map.missionName},'%')
+        </if>
+        <if test="map.finish !=null">
+            and tmi.status = #{map.finish}
+        </if>
+        <if test="map.missionType !=null">
+            and tmi.mission_type = #{map.missionType}
+        </if>
+        <if test="map.start !=null and map.end !=null">
+            and tum.join_time between #{map.start} and #{map.end}
+        </if>
+        <if test="map.isdelete !=null">
+            and tmi.isdelete = #{map.isdelete}
+        </if>
+        <if test="map.timeStatus !=null">
+            and tmi.time_status = #{map.timeStatus}
+        </if>
+        <if test="map.missionStatus !=null">
+            and tum.finish = #{map.missionStatus}
+        </if>
+    </select>
+</mapper>

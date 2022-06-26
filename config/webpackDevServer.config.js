@@ -110,7 +110,12 @@ module.exports = function (proxy, allowedHost) {
         target: 'http://localhost:8081/DisServe', // 后台服务地址以及端口号
         changeOrigin: true, //是否跨域
         pathRewrite: { '^/disServer': '/' }
-      }
+      },
+      '/userServer': {
+        target: 'http://localhost:8081/UserService', // 后台服务地址以及端口号
+        changeOrigin: true, //是否跨域
+        pathRewrite: { '^/userServer': '/' }
+      },
     },
     onBeforeSetupMiddleware(devServer) {
       // Keep `evalSourceMapMiddleware`

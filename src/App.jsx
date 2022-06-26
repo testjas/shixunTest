@@ -5,7 +5,6 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import Aside from "./components/Aside";
 import Bread from "./components/Bread";
-import { useEffect } from "react";
 import { useState } from "react";
 
 const { Content } = Layout;

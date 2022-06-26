@@ -1,7 +1,14 @@
 import request from "./RegRequest";
 import disRequest from './DisRequest'
+import userServe from './UserRequest'
 
 //用户管理操作
+//校验token
+export const CheckToken = (params) => request.post("/token",params);
+
+//获取数据
+export const GetUserAuth = () => request.post("/getUserAuth");
+
 //注册
 export const RegisterApi = (params) => request.post("/register", params);
 
@@ -36,6 +43,10 @@ export const UpdateMission = (params)=> request.post("/updateMission",params);
 export const GetLoginTime = (params)=> request.post("/getLoginTime",params);
 
 //派发员操作
+//获取派发员数据
+export const GetDisData = (params)=> disRequest.post("/getDisData",params);
+
+
 //获取任务列表
 export const GetDisMissionList = (params)=> disRequest.post("/getDisMissionList",params);
 
@@ -59,3 +70,22 @@ export const DeleteUserMission = (params)=> disRequest.post("/deleteUserMission"
 
 //修改用户是否完成
 export const UpdateUserFinish = (params)=> disRequest.post("/updateUserFinish",params);
+
+//用户操作
+//获取任务列表
+export const GetUserMissionList =(params)=>userServe.post("/getUserMissionList",params);
+
+//给用户添加任务
+export const IntoMission =(params)=>userServe.post("/intoMission",params);
+
+//获取用户的任务列表
+export const GetUserMissionInfoList =(params)=>userServe.post("/getUserMissionInfo",params);
+
+//用户完成签到
+export const FinishSign =(params)=>userServe.post("/finishSign",params);
+
+//用户完成作业
+export const FinishTask =(params)=>userServe.post("/finishTask",params);
+
+//用户数据获取
+export const GetUserData =(params)=>userServe.post("/getUserData",params);

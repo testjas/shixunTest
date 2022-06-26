@@ -39,8 +39,10 @@ export default function Header() {
         //退出登录后清除相关信息
         localStorage.removeItem('username');
         localStorage.removeItem('auth');
+        localStorage.removeItem("token");
         message.success("操作成功");
-        setTimeout(()=>{navigate('/login');},1000);//在1秒后跳转到登陆界面
+        // eslint-disable-next-line no-restricted-globals
+        setTimeout(()=>{location.href = "/login";},1000);//在1秒后跳转到登陆界面
     }
 
     const editInfo=()=>{
@@ -50,9 +52,7 @@ export default function Header() {
 
     const LoginMenu = (//有登陆时的菜单
         <Menu>{/*弹出的菜单*/}
-            <Menu.Item key={1} onClick={editInfo}>修改资料</Menu.Item>
-            <Menu.Divider/>{/*分隔用的分隔线*/}
-            <Menu.Item key={2} onClick={logOut}>退出登录</Menu.Item>
+            <Menu.Item key={1} onClick={logOut}>退出登录</Menu.Item>
         </Menu>
     );
     const LogoutMenu = (//没登录时的菜单

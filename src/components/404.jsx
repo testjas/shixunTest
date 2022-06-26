@@ -1,10 +1,13 @@
-import React from 'react'
+import { Button, Result } from 'antd';
+import React from 'react';
 
 export default function P404() {
   return (
-    <div>
-        <h2>404</h2><br />
-        <h2>您所查看的页面不存在或者是没有权限查看，请重试</h2>
-    </div>
+    <Result
+    status="404"
+    title="404"
+    subTitle="您访问的网页不存在或者没有权限访问,请重试~"
+
+  />
   )
 }

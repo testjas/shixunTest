@@ -48,7 +48,7 @@ export default function AddUser(props) {
 
   return (
     <ModalForm
-      title="添加用户"
+      title="添加任务"
       trigger={
         <Button type="primary">
           <PlusOutlined />

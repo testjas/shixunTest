@@ -23,12 +23,21 @@
     }
     .container_main {
       width: 98%;
-      background-color: rgb(171, 243, 247);
+      display: flex;
+      background-color: rgba(207, 238, 239, 0.181);
       border-radius: 5px;
       margin-left: auto;
       margin-right: auto;
       margin-bottom: 5px;
       border-radius: 5px;
+      .container_chart1{
+        width: 48%;
+        border-right: darkblue dashed 1px;
+      }
+      .container_chart2{
+        width: 48%;
+        border-left: darkblue dashed 1px;
+      }
     }
   }
 }
@@ -37,6 +46,7 @@
   width: 100%;
   display: flex;
   padding-top: 10px;
+  text-align: center;
   .container {
     padding-left: 5px;
     .input {

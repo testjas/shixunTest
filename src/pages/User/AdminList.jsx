@@ -22,6 +22,14 @@ export default function AdminList() {
   const [val,setVal]=useState(null);//设置查询条件
   const text = "你确定要删除这条数据吗？";
 
+  function pdLogin(e){
+    if(e==="该用户未登陆过"){
+      return e;
+    }else{
+      return moment(e).utcOffset(-6).format("YYYY-MM-DD HH:mm:ss")
+    }
+  }
+
   const setValue=(values)=>{
     setVal(values);
     getList(current, pageSize,values);
@@ -159,7 +167,7 @@ export default function AdminList() {
                   />
                   <div className="pwd">
                     最近一次登陆时间: <br />
-                    { "123  " }
+                    {pdLogin(item.password)}
                   </div>
                 </Skeleton>
               </List.Item>

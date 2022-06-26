@@ -21,12 +21,16 @@ export default function Login() {
       username: values.username,
       password: values.password,
     }).then((res) => {
+      console.log(res);
       if (res.flag === true) {
         message.success(res.message); //登陆成功后的提示
         localStorage.setItem("username", res.data.username); //存储后端登陆成功后返回的数据
         localStorage.setItem("auth", res.data.auth);
+        localStorage.setItem("token",res.data.token);
         setTimeout(() => {
-          navigate("/");
+          // navigate("/");
+          // eslint-disable-next-line no-restricted-globals
+          location.href = "/";
         }, 1500); //注册成功1.5秒后跳转
       } else {
         message.error(res.message);

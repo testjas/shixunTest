@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxy.mapper.table_user_missionMapper">
+
+    <resultMap id="BaseResultMap" type="com.lxy.entity.table_user_mission">
+        <id property="mid" column="mid" jdbcType="INTEGER"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="finish" column="finish" jdbcType="INTEGER"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="joinTime" column="join_time" jdbcType="TIMESTAMP"/>
+        <result property="isdelete" column="isdelete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        mid
+        ,mission_name,dispatcher_name,
+        uid,finish,finish_time,
+        join_time
+    </sql>
+
+    <delete id="deleteUM"><!--删除用户-->
+        delete
+        from table_user_mission
+        where isdelete = 1
+    </delete>
+
+    <select id="selectData" parameterType="int" resultType="com.lxy.entity.UserData">
+        select mission_type type, count(*) num
+        from table_mission_info tmi,
+             table_user_mission tum
+        where tmi.mid = tum.mid
+          and tum.uid = #{uid}
+        GROUP BY mission_type
+    </select>
+
+</mapper>

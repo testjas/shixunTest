@@ -1,17 +1,16 @@
 import React, { Avatar, useState, useEffect } from "react";
-import MissionLess from "../less/Mission.less";
+import Missionless from "../less/Mission.less";
 import PopMenu from "./Mission/PopMenu";
-import AddMission from "./Mission/AddMission";
 import { Popconfirm, message, List, Skeleton, Pagination, Button } from "antd";
 import {
   ProFormDateTimeRangePicker,
-  ProFormDateRangePicker,
-  ProFormSlider,
+  ProFormSelect,
   ProFormText,
   QueryFilter,
 } from "@ant-design/pro-components";
-import { GetUserList, DeleteUser, UpdateUser } from "../../request/api";
-import userIcon from "../../assets/img/userIcon.svg";
+import {  IntoMission,GetUserMissionList } from "../../request/api";
+import signIcon from "../../assets/img/signIcon.svg";
+import taskIcon from "../../assets/img/taskIcon.svg"
 import moment from "moment";
 
 export default function Mission() {
@@ -20,35 +19,62 @@ export default function Mission() {
   const [current, setCurrnet] = useState(1); //现在页数
   const [pageSize, setPageSize] = useState(5); //一页多少
   const [update, setUpdate] = useState(0);
-  const text = "你确定要删除这条数据吗？";
+  const [val, setVal] = useState(null); //设置查询条件
+  const text = "你确定要删除这条任务吗？";
 
-  // const handleOk = (e) => {//确认修改
-  //   UpdateUser({
-  //     id: values.id,
-  //     username: e.username,
-  //     date: moment(e.date).format("yyyy-MM-DD hh:mm:ss"),
-  //   }).then((res) => {
-  //     message.info(res.message);
-  //     setUpdate(update + 1);
-  //   });
+  function join(e){
+    if(e.isdelete===2 || e.timeStatus==="已结束" || e.timeStatus==="未开始" || e.status==="已满"){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+
+  const setValue = (values) => {
+    setVal(values);
+    getList(current, pageSize, values);
+  };
+
+  function canJoin(e){//判断是否可加入
+    if(e.isdelete===2 || e.timeStatus==="已结束" || e.timeStatus==="未开始" || e.status==="已满"){
+      return "否";
+    }else{
+      return "是";
+    }
+  }
+
+  function pdStatus(e){//判断是否中止
+    if(e===0){
+      return "正常";
+    }else{
+      return "中止";
+    }
+  }
 
   function confirm(e) {
-    //确定是否需要删除
-    // console.log(e)
-    DeleteUser({
-      id: e,
+    //确认是否删除任务
+    IntoMission({
+      mid: e,
+      username:localStorage.getItem("username")
     }).then((res) => {
-      message.info(res.message);
+      if(res.flag===true){
+        message.success(res.message);
+      }else{
+        message.error(res.message);
+      }
       setUpdate(update + 1);
     });
   }
 
-  const getList = (num) => {
-    //获取用户数据列表
-    GetUserList({
-      num,
+  const getList = (page, pageSize, ...values) => {
+    //获取任务数据列表
+    GetUserMissionList({
+      num: page,
       count: pageSize,
+      username:localStorage.getItem("username"),
+      values,
     }).then((res) => {
+      // console.log(res)
       if (res.flag === true) {
         let { arr, num, count, total } = res.data;
         setList(arr);
@@ -59,37 +85,89 @@ export default function Mission() {
     });
   };
 
+  function setUp(e) {
+    //子组件更新时调用此方法刷新父组件
+    setUpdate(update + e);
+  }
+
   //请求列表数据
   useEffect(() => {
-    getList(current);
+    getList(current, pageSize, val);
   }, [update]);
 
-  const onChange = (pages) => {
+  const onChange = (page, pageSize) => {
+    setPageSize(pageSize);
     //分页触发事件
-    getList(pages);
+    getList(page, pageSize, val);
   };
 
   return (
-    <div>
+    <div className="total">
       <div className="list_search">
         <QueryFilter
           onFinish={async (values) => {
-            console.log(values.name);
+            setValue(values);
+          }}
+          onReset={async () => {
+            setVal(null);
+            getList(1, pageSize);
           }}
         >
           <ProFormText
             name="mname"
             label="任务名称"
           />
-          <ProFormText name="belong" label="任务归属" />
-          <ProFormSlider name="range" label="人数范围" range />
-          <ProFormDateTimeRangePicker name="datetimeRanger" label="日期范围" />
+          <ProFormSelect
+            name="canJoin"
+            label="是否可加入"
+            showSearch
+            valueEnum={{
+              1: "可以加入",
+              0: "不可加入"
+            }}
+          />
+          <ProFormSelect
+            name="missiontype"
+            label="任务类型"
+            showSearch
+            valueEnum={{
+              作业: "作业",
+              签到: "签到",
+            }}
+          />
+          <ProFormSelect
+            name="missionstatus"
+            label="任务状态"
+            showSearch
+            valueEnum={{
+              已满: "已满",
+              未满: "未满"
+            }}
+          />
+          <ProFormSelect
+            name="timestatus"
+            label="时间状态"
+            showSearch
+            valueEnum={{
+              已结束:"已结束",
+              已发布:"已发布",
+              未开始:"未开始"
+            }}
+          />
+          <ProFormSelect
+            name="status"
+            label="状态"
+            showSearch
+            valueEnum={{
+              0:"正常",
+              2:"中止",
+            }}
+          />
+          <ProFormDateTimeRangePicker name="create" label="创建时间" colSize={3} />
         </QueryFilter>
       </div>
-      <div className="add_user">
-        <AddMission />
-      </div>
-      <div className="list_table">
+      <div className="blank"></div>
+      <div className="mlist_table">
         <List
           className="demo-loadmore-list"
           itemLayout="horizontal"
@@ -98,38 +176,73 @@ export default function Mission() {
             return (
               <List.Item
                 actions={[
-                  <PopMenu values={item} />,
+                  <PopMenu setUp={setUp} values={item} />,
                   <Popconfirm //弹窗确认
                     placement="topLeft"
                     title={text}
-                    onConfirm={() => confirm(item.id)}
+                    onConfirm={() => confirm(item.mid)}
                     okText="确认"
                     cancelText="取消"
+                    disabled={join(item)}
                   >
-                    <Button type="danger" key="list-loadmore-more">
-                      删除
+                    <Button size="small" disabled={join(item)} type="primary" key="list-loadmore-more">
+                      加入
                     </Button>
                   </Popconfirm>,
                 ]}
               >
                 <Skeleton loading={false} active>
                   <List.Item.Meta
-                    avatar={<img className="UserIcon" src={userIcon} />}
+                    avatar={<img className="MissionIcon" src={item.missionType==="签到"? signIcon:taskIcon} />}
                     title={
                       <div className="title">
-                        &nbsp;用户名：
-                        <a className="title-text">{item.username}</a>
+                        &nbsp;任务名：
+                        <a className="title-text">{item.missionName}</a>
+                        <div className="time_range">
+                          任务时间范围：
+                          <a>
+                            {moment(item.startTime)
+                              .utcOffset(8)
+                              .format("YYYY-MM-DD HH:mm:ss")}
+                          </a>
+                          ----
+                          <a>
+                            {moment(item.endTime)
+                              .utcOffset(8)
+                              .format("YYYY-MM-DD HH:mm:ss")}
+                          </a>
+                        </div>
+                        <div className="status">状态：<a>{pdStatus(item.isdelete)}</a></div>
                       </div>
                     }
                     description={
                       <div className="title-auth">
-                        <p className="title-authText">用户归属：{item.auth}</p>
+                        <p className="title-type">
+                          任务归属：<a>{item.belong}</a>
+                        </p>
+                        <p className="title-type">
+                          当前任务类型：<a>{item.missionType  }</a>
+                        </p>
+                        <p className="title-active">
+                          当前任务状态：<a>{item.status}</a>
+                        </p>
+                        <p className="title-active">
+                          当前时间状态：<a>{item.timeStatus}</a>
+                        </p>
+                        <p className="title-finish">
+                          参与人数：<a>{item.userNum}/{item.joinedNum}</a>
+                        </p>
+                        <p className="title-active">
+                          是否可加入：<a>{canJoin(item)}</a>
+                        </p>
                       </div>
                     }
                   />
                   <div className="pwd">
-                    最近一次登录/修改时间:
-                    {moment(item.date).format("yyyy-MM-DD hh:mm:ss")}
+                    任务创建时间：<br />
+                    {moment(item.createTime)
+                      .utcOffset(8)
+                      .format("YYYY-MM-DD HH:mm:ss")}
                   </div>
                 </Skeleton>
               </List.Item>
@@ -138,6 +251,8 @@ export default function Mission() {
         />
         <Pagination
           style={{ float: "right", marginTop: "20px" }}
+          showSizeChanger
+          pageSizeOptions={[5, 10, 20, 50, 100]}
           onChange={onChange}
           current={current}
           pageSize={pageSize}

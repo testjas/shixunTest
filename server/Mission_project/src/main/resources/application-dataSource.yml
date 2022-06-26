@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/missiondb?serverTimezone=GMT%2b8&allowMultiQueries=true #同意一次执行多条sql语句
+      username: root
+      password: 123456
